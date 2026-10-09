@@ -1,0 +1,236 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-manrope), "Manrope", system-ui, sans-serif;
+
+  --color-ink: #0b0908;
+  --color-ink-2: #15110f;
+  --color-ivory: #f2ece1;
+  --color-ivory-2: #e8dfcf;
+  --color-gold: #c9a35c;
+  --color-gold-hi: #e8cf98;
+  --color-crimson: #7a0f20;
+  --color-indigo: #0c1426;
+  --color-mute: #8d8476;
+
+  --ease-luxe: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* page-wide colour themes, switched per section by ScrollTrigger */
+:root {
+  --bg: var(--color-ink);
+  --fg: #f4eee4;
+  --fg-mute: rgba(244, 238, 228, 0.55);
+  --line: rgba(244, 238, 228, 0.14);
+  color-scheme: dark;
+}
+:root[data-theme="indigo"] {
+  --bg: var(--color-indigo);
+  --fg: #e9eef8;
+  --fg-mute: rgba(233, 238, 248, 0.55);
+  --line: rgba(233, 238, 248, 0.14);
+}
+:root[data-theme="ivory"] {
+  --bg: var(--color-ivory);
+  --fg: #1a1512;
+  --fg-mute: rgba(26, 21, 18, 0.58);
+  --line: rgba(26, 21, 18, 0.14);
+  color-scheme: light;
+}
+
+html {
+  background: var(--bg);
+  transition: background-color 0.9s var(--ease-luxe);
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  transition:
+    background-color 0.9s var(--ease-luxe),
+    color 0.9s var(--ease-luxe);
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+/* the WebGL dupatta floats above section backgrounds, below foreground copy */
+.silk-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.silk-canvas canvas {
+  display: block;
+}
+
+@layer components {
+  .layer-front {
+    position: relative;
+    z-index: 10;
+  }
+  .layer-back {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* film grain over everything — keeps flat colour from feeling digital */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.2s steps(6) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+@layer components {
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--fg-mute);
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+}
+
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px currentColor;
+}
+
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+}
+
+/* split-text line masks */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+@layer components {
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.75rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.5s var(--ease-luxe);
+}
+.btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  transform: translateY(101%);
+  transition: transform 0.6s var(--ease-luxe);
+}
+.btn:hover::before {
+  transform: translateY(0);
+}
+.btn-gold {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+.btn-gold::before {
+  background: var(--fg);
+}
+.btn-ghost {
+  border: 1px solid var(--line);
+  color: var(--fg);
+}
+.btn-ghost::before {
+  background: var(--fg);
+}
+.btn-ghost:hover {
+  color: var(--bg);
+}
+
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 70;
+  pointer-events: none;
+  border-radius: 999px;
+  mix-blend-mode: difference;
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  background: #fff;
+}
+.cursor-ring {
+  width: 38px;
+  height: 38px;
+  margin: -19px 0 0 -19px;
+  border: 1px solid #fff;
+  transition:
+    width 0.4s var(--ease-luxe),
+    height 0.4s var(--ease-luxe),
+    margin 0.4s var(--ease-luxe);
+}
+.cursor-ring.is-hover {
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
+}
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    animation: none;
+  }
+}
